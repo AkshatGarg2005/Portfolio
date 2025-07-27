@@ -14,11 +14,14 @@
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 2px 10px var(--shadow);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
 }
 
 .skill-category:hover {
   transform: translateY(-5px);
+  border-color: var(--primary-color);
+  box-shadow: 0 10px 30px var(--shadow);
 }
 
 .skill-category h3 {

@@ -98,7 +98,8 @@ const Projects = () => {
                 key={index}
                 className={`project-card ${index === activeProject ? 'active' : ''}`}
                 style={{
-                  transform: `translateX(${(index - activeProject) * 105}%)`,
+                  transform: `translateX(calc(-50% + ${(index - activeProject) * 105}%))`,
+                  left: '50%',
                   opacity: index === activeProject ? 1 : 0.3,
                   pointerEvents: index === activeProject ? 'all' : 'none'
                 }}
@@ -127,12 +128,12 @@ const Projects = () => {
                 </div>
                 
                 <div className="project-links">
-                  <a href="#" className="project-link">
+                  <a href="https://github.com/AkshatGarg2005" target="_blank" rel="noopener noreferrer" className="project-link">
                     <FaGithub /> View Code
                   </a>
-                  <a href="#" className="project-link">
+                  {/* <a href="#" onClick={(e) => { e.preventDefault(); alert('Live demo coming soon!'); }} className="project-link">
                     <FaExternalLinkAlt /> Live Demo
-                  </a>
+                  </a> */}
                 </div>
               </div>
             ))}
