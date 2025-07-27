@@ -186,6 +186,8 @@
   .education-icon {
     left: -15px !important;
     right: auto !important;
+    margin-left: -39px !important;
+    z-index: 22 !important;
   }
 
   .education-card::before {

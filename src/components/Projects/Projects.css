@@ -2,10 +2,21 @@
 .projects {
   background-color: var(--bg-secondary);
   overflow: hidden;
+  padding: 4rem 0;
 }
 
 .projects .container {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.projects h2 {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  color: var(--text-primary);
 }
 
 .projects-showcase {
@@ -35,6 +46,7 @@
   padding: 2.5rem;
   box-shadow: 0 10px 30px var(--shadow);
   transition: all 0.5s ease;
+  border: 1px solid var(--border-color);
 }
 
 .project-card.active {
@@ -44,29 +56,35 @@
 .project-header {
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  align-items: flex-start;
   margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .project-header h3 {
   color: var(--text-primary);
   font-size: 1.8rem;
   margin: 0;
+  line-height: 1.2;
+  flex: 1;
 }
 
 .project-type {
   background-color: var(--primary-color);
   color: white;
-  padding: 0.3rem 0.8rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .project-period {
   color: var(--text-secondary);
   font-size: 0.95rem;
   margin-bottom: 1rem;
+  font-weight: 500;
 }
 
 .project-description {
@@ -83,19 +101,22 @@
 .project-features h4 {
   color: var(--text-primary);
   font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
 }
 
 .project-features ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .project-features li {
   color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
   padding-left: 1.5rem;
   position: relative;
+  line-height: 1.5;
 }
 
 .project-features li::before {
@@ -104,28 +125,32 @@
   left: 0;
   color: var(--primary-color);
   font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .project-technologies {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
 }
 
 .tech-tag {
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
-  padding: 0.3rem 0.8rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 15px;
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
 .tech-tag:hover {
   background-color: var(--primary-color);
   color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
 }
 
 .project-links {
@@ -136,19 +161,24 @@
 .project-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.2rem;
+  gap: 0.6rem;
+  padding: 0.8rem 1.4rem;
   background-color: var(--bg-tertiary);
   color: var(--text-primary);
   border-radius: 8px;
   font-weight: 500;
   transition: all 0.3s ease;
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
 }
 
 .project-link:hover {
   background-color: var(--primary-color);
   color: white;
+  border-color: var(--primary-color);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
 }
 
 .project-nav {
@@ -180,17 +210,18 @@
 }
 
 .project-nav-prev {
-  left: 20px;
+  left: 10px;
 }
 
 .project-nav-next {
-  right: 20px;
+  right: 10px;
 }
 
 .project-indicators {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
+  margin-top: 2rem;
 }
 
 .indicator {
@@ -214,28 +245,221 @@
   background-color: var(--primary-color);
 }
 
-/* Responsive */
+/* Tablet Responsive */
+@media (max-width: 1024px) {
+  .projects .container {
+    padding: 0 1.5rem;
+  }
+  
+  .projects-showcase {
+    padding: 0 50px;
+  }
+  
+  .project-card {
+    padding: 2rem;
+    width: 85%;
+  }
+  
+  .project-header h3 {
+    font-size: 1.6rem;
+  }
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
+  .projects {
+    padding: 3rem 0;
+  }
+  
+  .projects .container {
+    padding: 0 1rem;
+  }
+  
+  .projects h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
   .projects-showcase {
     padding: 0 50px;
   }
 
+  .project-carousel {
+    height: auto;
+    min-height: 770px;
+  }
+
   .project-card {
-    padding: 1.5rem;
-    width: 85%;
+    padding: 1.8rem;
+    width: 92%;
+    max-width: none;
+    overflow: visible;
+    height: auto;
+    min-height: 720px;
+    display: flex;
+    flex-direction: column;
   }
 
   .project-header {
     flex-direction: column;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
   }
 
   .project-header h3 {
     font-size: 1.4rem;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--text-primary);
+    word-wrap: break-word;
+    hyphens: auto;
+    width: 100%;
+    margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .project-type {
     align-self: flex-start;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-top: 0.5rem;
+  }
+
+  .project-period {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .project-description {
+    font-size: 1rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+    flex-shrink: 0;
+  }
+
+  .project-features {
+    margin-bottom: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .project-features h4 {
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+    font-weight: 600;
+  }
+
+  .project-features li {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1.2rem;
+    line-height: 1.4;
+  }
+
+  .project-technologies {
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .tech-tag {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.7rem;
+    word-break: keep-all;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: 12px;
+  }
+
+  .project-nav {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+
+  .project-nav-prev {
+    left: 8px;
+  }
+
+  .project-nav-next {
+    right: 8px;
+  }
+
+  .project-links {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+
+  .project-link {
+    width: 100%;
+    justify-content: center;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .project-indicators {
+    margin-top: 1.5rem;
+  }
+}
+
+/* Small Mobile Responsive */
+@media (max-width: 480px) {
+  .projects-showcase {
+    padding: 0 40px;
+  }
+  
+  .project-carousel {
+    min-height: 740px;
+  }
+  
+  .project-card {
+    padding: 1.5rem;
+    width: 95%;
+    min-height: 700px;
+  }
+
+  .project-header h3 {
+    font-size: 1.2rem;
+    line-height: 1.25;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    word-break: break-word;
+  }
+
+  .project-type {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    margin-top: 0.3rem;
+  }
+
+  .project-period {
+    font-size: 0.85rem;
+  }
+
+  .project-description {
+    font-size: 0.95rem;
+  }
+
+  .project-features li {
+    font-size: 0.85rem;
+  }
+
+  .project-technologies {
+    gap: 0.4rem;
+  }
+
+  .tech-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .project-nav {
@@ -245,24 +469,73 @@
   }
 
   .project-nav-prev {
-    left: 10px;
+    left: 5px;
   }
 
   .project-nav-next {
-    right: 10px;
+    right: 5px;
   }
+}
 
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+  .projects .container {
+    padding: 0 0.5rem;
+  }
+  
+  .projects-showcase {
+    padding: 0 35px;
+  }
+  
   .project-carousel {
-    height: auto;
-    min-height: 650px;
+    min-height: 700px;
+  }
+  
+  .project-card {
+    padding: 1.2rem;
+    width: 98%;
+    min-height: 660px;
+  }
+  
+  .projects h2 {
+    font-size: 1.8rem;
+  }
+  
+  .project-header h3 {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+  
+  .project-type {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .project-description {
+    font-size: 0.9rem;
+  }
+  
+  .project-features li {
+    font-size: 0.8rem;
   }
 
-  .project-links {
-    flex-direction: column;
+  .tech-tag {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
   }
 
-  .project-link {
-    width: 100%;
-    justify-content: center;
+  .project-nav {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+
+  .project-nav-prev {
+    left: 2px;
+  }
+
+  .project-nav-next {
+    right: 2px;
   }
 }

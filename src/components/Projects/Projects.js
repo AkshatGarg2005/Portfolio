@@ -18,7 +18,8 @@ const Projects = () => {
         'Implemented dynamic pricing and order lifecycle',
         'Led end-to-end development solo'
       ],
-      type: 'Full-Stack Product'
+      type: 'Full-Stack Product',
+      githubUrl: 'https://github.com/AkshatGarg2005/SecondSons'
     },
     {
       title: 'AgriSense – Smart Farming System',
@@ -31,7 +32,8 @@ const Projects = () => {
         'Reduced expected crop losses by 20% through proactive alerts',
         'Real-time dashboard for farm monitoring'
       ],
-      type: 'IoT & Machine Learning'
+      type: 'IoT & Machine Learning',
+      githubUrl: 'https://github.com/AkshatGarg2005/AgriSense'
     },
     {
       title: 'ThermoSense – Cross-Platform Sensor Dashboard',
@@ -44,7 +46,8 @@ const Projects = () => {
         'Built ML model for battery health trend prediction',
         'Seamless performance across Windows and macOS'
       ],
-      type: 'IoT/ML System Monitoring'
+      type: 'IoT/ML System Monitoring',
+      githubUrl: 'https://github.com/AkshatGarg2005/ThermoSense'
     },
     {
       title: 'ShaktiPath – Women Safety Navigation App',
@@ -57,7 +60,8 @@ const Projects = () => {
         'Implemented real-time GPS tracking',
         'One-tap SOS alert feature for emergencies'
       ],
-      type: 'Hackathon Project'
+      type: 'Hackathon Project',
+      githubUrl: 'https://github.com/AkshatGarg2005/ShaktiPath'
     },
     {
       title: 'IntelliQrHelp – Smart Emergency Response System',
@@ -70,7 +74,8 @@ const Projects = () => {
         'Integrated Telegram bot for real-time alerts',
         'ESP8266-based IoT SOS button'
       ],
-      type: 'Health Hackathon Project'
+      type: 'Health Hackathon Project',
+      githubUrl: 'https://github.com/AkshatGarg2005/intelliqrhelp'
     }
   ];
 
@@ -128,12 +133,9 @@ const Projects = () => {
                 </div>
                 
                 <div className="project-links">
-                  <a href="https://github.com/AkshatGarg2005" target="_blank" rel="noopener noreferrer" className="project-link">
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link">
                     <FaGithub /> View Code
                   </a>
-                  {/* <a href="#" onClick={(e) => { e.preventDefault(); alert('Live demo coming soon!'); }} className="project-link">
-                    <FaExternalLinkAlt /> Live Demo
-                  </a> */}
                 </div>
               </div>
             ))}
