@@ -1,136 +1,156 @@
 /* src/components/Contact/Contact.css */
 .contact {
-  background-color: var(--bg-primary);
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
   min-height: 80vh;
   display: flex;
   align-items: center;
 }
 
 .contact-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  width: 100%;
 }
 
 .contact-intro {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .contact-intro h3 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: var(--text-primary);
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradient 3s ease infinite;
 }
 
 .contact-intro p {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 700px;
-  margin: 0 auto 1rem;
+  line-height: 1.8;
 }
 
-.contact-grid {
+.contact-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
 .contact-card {
   position: relative;
-  background-color: var(--card-bg);
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 2rem;
   text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  transition: all 0.3s ease;
   overflow: hidden;
-  box-shadow: 0 2px 10px var(--shadow);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
 }
 
-.contact-card::before {
-  content: '';
+.card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.card-bg {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 4px;
+  left: -100%;
+  width: 100%;
   height: 100%;
-  background-color: var(--accent-color);
-  transform: scaleY(0);
-  transition: transform 0.3s ease;
-  transform-origin: bottom;
+  background: var(--card-gradient);
+  opacity: 0.1;
+  transition: left 0.5s ease;
+  z-index: 1;
+}
+
+.contact-card:hover .card-bg {
+  left: 0;
 }
 
 .contact-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px var(--shadow);
+  box-shadow: 0 15px 30px -10px var(--shadow-lg);
+  border-color: var(--card-color);
 }
 
-.contact-card:hover::before {
-  transform: scaleY(1);
-}
-
-.contact-card-icon {
+.card-icon {
   width: 60px;
   height: 60px;
-  background-color: var(--bg-secondary);
-  border-radius: 12px;
+  background: var(--card-gradient);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: var(--accent-color);
+  font-size: 1.8rem;
+  color: white;
+  flex-shrink: 0;
   transition: all 0.3s ease;
 }
 
-.contact-card:hover .contact-card-icon {
-  background-color: var(--accent-color);
-  color: white;
-  transform: rotate(10deg);
+.contact-card:hover .card-icon {
+  transform: rotate(10deg) scale(1.1);
+  box-shadow: 0 8px 20px -5px var(--card-color);
 }
 
-.contact-card-content {
+.card-info {
   flex: 1;
 }
 
-.contact-card-content h4 {
+.card-info h5 {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.card-info p {
   font-size: 1.1rem;
   color: var(--text-primary);
-  margin-bottom: 0.3rem;
+  margin: 0;
   font-weight: 600;
 }
 
-.contact-card-content p {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-.contact-card-arrow {
-  font-size: 1rem;
+.card-arrow {
+  font-size: 1.2rem;
   color: var(--text-secondary);
   transition: all 0.3s ease;
   opacity: 0;
+  transform: translateX(-10px);
 }
 
-.contact-card:hover .contact-card-arrow {
+.contact-card:hover .card-arrow {
   opacity: 1;
-  transform: translateX(5px);
-  color: var(--accent-color);
+  transform: translateX(0);
+  color: var(--card-color);
 }
 
 .contact-footer {
   text-align: center;
-  margin-top: 3rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border-color);
 }
 
 .location {
@@ -139,8 +159,8 @@
   justify-content: center;
   gap: 0.5rem;
   color: var(--text-secondary);
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
 }
 
 .location svg {
@@ -148,82 +168,151 @@
   font-size: 1.3rem;
 }
 
-.availability {
-  font-size: 1.1rem;
-  color: var(--primary-color);
-  font-weight: 500;
-  padding: 1rem 2rem;
-  background-color: var(--bg-secondary);
+.availability-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-secondary);
   border-radius: 30px;
-  display: inline-block;
-  animation: pulse 2s ease-in-out infinite;
+  font-weight: 500;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+.availability-dot {
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border-radius: 50%;
+  position: relative;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.availability-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: #10b981;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(1);
   }
-  70% {
-    box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.5;
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-  }
-}
-
-/* Animations */
-.contact-card {
-  animation: fadeIn 0.5s ease-out forwards;
-  opacity: 0;
-}
-
-.contact-card:nth-child(1) { animation-delay: 0.1s; }
-.contact-card:nth-child(2) { animation-delay: 0.2s; }
-.contact-card:nth-child(3) { animation-delay: 0.3s; }
-.contact-card:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes fadeIn {
-  from {
+    transform: translate(-50%, -50%) scale(1.5);
     opacity: 0;
-    transform: translateY(20px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+}
+
+.contact-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.2;
+}
+
+.bg-shape-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--primary-color);
+  top: -250px;
+  right: -250px;
+  animation: float 25s ease-in-out infinite;
+}
+
+.bg-shape-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--secondary-color);
+  bottom: -200px;
+  left: -200px;
+  animation: float 20s ease-in-out infinite reverse;
+}
+
+.bg-shape-3 {
+  width: 300px;
+  height: 300px;
+  background: var(--accent-color);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 15s ease-in-out infinite;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .contact {
+    min-height: auto;
+    padding: 80px 0;
+  }
+
   .contact-intro h3 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
   
   .contact-intro p {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
   
-  .contact-grid {
+  .contact-cards {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
   }
   
   .contact-card {
     padding: 1.5rem;
   }
   
-  .contact-card-icon {
+  .card-icon {
     width: 50px;
     height: 50px;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+  }
+  
+  .card-info h5 {
+    font-size: 0.85rem;
+  }
+  
+  .card-info p {
+    font-size: 1rem;
   }
   
   .location {
     font-size: 1rem;
   }
   
-  .availability {
-    font-size: 1rem;
-    padding: 0.8rem 1.5rem;
+  .availability-badge {
+    font-size: 0.95rem;
+    padding: 0.6rem 1.25rem;
   }
 }
