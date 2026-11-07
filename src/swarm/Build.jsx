@@ -22,8 +22,9 @@ const DEFAULT_STEPS = {
  *   label  tag shown on the selection outline (defaults to the tag name)
  *   spawn  agents spawn around this element
  *   waitFor  a clone group id: wait until every item in that group is placed
+ *   typing   'char' to always type letter by letter
  */
-export function useBuildable(ref, { kind = 'box', steps, group, label, guide, spawn, waitFor } = {}) {
+export function useBuildable(ref, { kind = 'box', steps, group, label, guide, spawn, waitFor, typing } = {}) {
   const engine = useContext(SwarmContext)
   const parentId = useContext(BuildParentContext)
   const id = useId()
@@ -38,16 +39,16 @@ export function useBuildable(ref, { kind = 'box', steps, group, label, guide, sp
   useLayoutEffect(() => {
     const el = ref.current
     if (!engine || !el) return undefined
-    engine.register(id, el, { steps: key.split(' '), group, label, guide, spawn, waitFor, parentId })
+    engine.register(id, el, { steps: key.split(' '), group, label, guide, spawn, waitFor, typing, parentId })
     return () => engine.unregister(id)
-  }, [engine, id, key, group, label, guide, spawn, waitFor, parentId, ref])
+  }, [engine, id, key, group, label, guide, spawn, waitFor, typing, parentId, ref])
 
   return { id, key }
 }
 
-export function Build({ as: Tag = 'div', kind, steps, group, label, guide, spawn, waitFor, children, ...rest }) {
+export function Build({ as: Tag = 'div', kind, steps, group, label, guide, spawn, waitFor, typing, children, ...rest }) {
   const ref = useRef(null)
-  const { id, key } = useBuildable(ref, { kind, steps, group, label, guide, spawn, waitFor })
+  const { id, key } = useBuildable(ref, { kind, steps, group, label, guide, spawn, waitFor, typing })
   return (
     <BuildParentContext.Provider value={id}>
       <Tag ref={ref} data-build={key} {...rest}>

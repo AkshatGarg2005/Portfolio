@@ -47,7 +47,9 @@ export const TIMING = {
   // Typing
   charMin: 25,
   charMax: 36,
-  wordModeAt: 40, // a text node longer than this many characters types a word at a time
+  wordModeAt: 28, // text nodes longer than this type a word at a time (not headings)
+  paragraphAt: 70, // ...and longer than this count as paragraphs (1–3 s each)
+  linePerChar: 14, // a word-at-a-time line takes this many ms per character
   paragraphMin: 1000,
   paragraphMax: 2000,
   paragraphPerChar: 7,

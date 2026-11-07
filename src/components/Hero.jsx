@@ -1,16 +1,78 @@
+import { useEffect, useRef } from 'react'
 import { profile } from '../content.js'
 import { Build } from '../swarm/Build.jsx'
 import { FileIcon, GitHubIcon, LinkedInIcon, RegMark } from './Icons.jsx'
 
+const clamp1 = (v) => Math.max(-1, Math.min(1, v))
+
+// While the pointer is level with the hero, the picture turns a little
+// toward it. Sets --tx and --ty (-1 to 1) on the picture's wrapper; CSS does
+// the rest. The float pauses while the hero is scrolled out of view.
+function useTilt(sectionRef, artRef) {
+  useEffect(() => {
+    const section = sectionRef.current
+    const art = artRef.current
+    if (!section || !art) return undefined
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let visible = true
+    let frame = 0
+    let px = 0
+    let py = 0
+    const set = (x, y) => {
+      art.style.setProperty('--tx', x.toFixed(3))
+      art.style.setProperty('--ty', y.toFixed(3))
+    }
+    const reset = () => {
+      cancelAnimationFrame(frame)
+      frame = 0
+      set(0, 0)
+    }
+    const apply = () => {
+      frame = 0
+      const s = section.getBoundingClientRect()
+      if (py < s.top || py > s.bottom) return set(0, 0)
+      const a = art.getBoundingClientRect()
+      set(clamp1((px - (a.left + a.width / 2)) / (window.innerWidth / 2)), clamp1((py - (a.top + a.height / 2)) / (s.height / 2)))
+    }
+    const move = (e) => {
+      if (!visible || !fine.matches || still.matches) return
+      px = e.clientX
+      py = e.clientY
+      if (!frame) frame = requestAnimationFrame(apply)
+    }
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      art.classList.toggle('is-away', !visible)
+      if (!visible) reset()
+    })
+    io.observe(section)
+    const root = document.documentElement
+    window.addEventListener('pointermove', move, { passive: true })
+    root.addEventListener('pointerleave', reset)
+    return () => {
+      io.disconnect()
+      cancelAnimationFrame(frame)
+      window.removeEventListener('pointermove', move)
+      root.removeEventListener('pointerleave', reset)
+    }
+  }, [sectionRef, artRef])
+}
+
 export function Hero() {
   const [role, stack] = profile.role.split(' · ')
+  const sectionRef = useRef(null)
+  const artRef = useRef(null)
+  useTilt(sectionRef, artRef)
   return (
-    <section id="top" className="relative mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24">
+    <section ref={sectionRef} id="top" className="relative mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24">
       <RegMark className="top-6 right-6 hidden lg:block" />
       <RegMark className="bottom-10 left-1 hidden lg:block" />
-      <div className="grid gap-8 sm:gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center lg:gap-16">
+      {/* The text column keeps room for the four buttons on one row; the picture
+          takes the rest, and on wide screens reaches into the page margin. */}
+      <div className="grid gap-8 sm:gap-12 lg:grid-cols-[minmax(560px,1fr)_minmax(0,1fr)] lg:items-center lg:gap-8 xl:gap-10">
         <div className="order-2 lg:order-1">
-          <Build as="p" steps={['text']} label="p" className="font-mono text-[13px] text-muted sm:text-sm">
+          <Build as="p" steps={['text']} typing="char" label="p" className="font-mono text-[13px] text-muted sm:text-sm">
             <span className="text-ink">{role}</span>
             <span className="text-faint"> · </span>
             {stack}
@@ -78,23 +140,27 @@ export function Hero() {
             </Build>
           </div>
         </div>
-        <div className="order-1 lg:order-2">
+        <div ref={artRef} className="hero-art order-1 lg:order-2">
+          {/* A transparent cut-out with no frame. The desk floats, its light
+              spills onto the canvas below, and it turns toward the pointer. */}
           <Build
             as="div"
             kind="image"
             label="img"
-            className="aspect-[4/5] w-[168px] overflow-hidden rounded-[20px] bg-[#d9d9d7] sm:w-[260px] lg:w-[360px] lg:rounded-[28px]"
+            className="relative w-full max-w-[360px] sm:max-w-[460px] lg:max-w-none xl:w-[calc(100%+48px)] 2xl:w-[calc(100%+96px)]"
           >
+            <span className="hero-glow hero-halo" aria-hidden="true" />
+            <span className="hero-glow hero-spill" aria-hidden="true" />
             <img
               src={profile.photo.src}
               srcSet={profile.photo.srcSet}
               sizes={profile.photo.sizes}
               width={profile.photo.width}
               height={profile.photo.height}
-              alt="Portrait of Akshat Garg"
+              alt="3D illustration of Akshat Garg coding at a desk"
               fetchPriority="high"
               decoding="async"
-              className="size-full object-cover object-[50%_30%]"
+              className="hero-img relative block h-auto w-full"
             />
           </Build>
         </div>

@@ -70,16 +70,23 @@ All text, links and dates live in `src/content.js`. The sections are in
   example "3 projects"). Only add one that the projects or certifications on
   the page back up.
 
-- **Photo:** `public/akshat.jpg` is the original. The page loads two smaller
-  copies, `akshat-480.jpg` and `akshat-800.jpg`. If you replace the photo,
-  regenerate them, e.g. on macOS:
-  `sips -s format jpeg -s formatOptions 60 --resampleWidth 800 public/akshat.jpg --out public/akshat-800.jpg`
-  (and the same with `480` and quality `62`).
+- **Hero picture:** a cut-out with a transparent background, shown without a
+  frame. It floats gently, casts a blue light below it and turns toward the
+  pointer (the `.hero-*` styles in `index.css`; all off with reduced motion).
+  The page loads one of `akshat-480.webp` to `akshat-1200.webp`. To swap in a
+  new one, export a PNG with a transparent background and run
+  `npm i -D sharp && node scripts/make-photo.mjs path/to/picture.png`.
+  It trims the empty edges and prints the new size; if the shape changes,
+  update `width` and `height` in `profile.photo`.
 - **Project visuals:** each project card has a lo-fi wireframe of the app in
   `src/components/ProjectVisuals.jsx`, picked by the project's `visual` key in
   `content.js`. They act out the app on hover. The QR code in the IntelliQrHelp
   phone is real and opens the live app; if that link changes, run
   `npm i -D qrcode && node scripts/make-qr.mjs <new url>`.
+- **Education:** each entry in `education` has a `score`, its label and a
+  `value` from 0 to 1 that sets the meter's length. `current: true` marks the
+  one in progress.
+- **About:** the sticky notes on the board come from `interests`.
 - **Resume:** replace `public/Akshat_Garg_Resume.pdf`.
 - **Link preview image:** `public/og.jpg` (1200 × 630) is a screenshot of the
   hero. Retake it if the hero changes.
@@ -117,6 +124,8 @@ Mark anything buildable with `<Build>`:
 - **`waitFor="<group>"`** holds an element back until every item in that clone
   group is placed. The certificate arrows use it so they never point at empty
   space.
+- **`typing="char"`** always types letter by letter. By default, headings and
+  short text type letter by letter, and longer lines type a word at a time.
 
 A few rules the engine keeps:
 

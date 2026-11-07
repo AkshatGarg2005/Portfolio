@@ -55,7 +55,8 @@ export function Contact() {
 
 export function Footer() {
   return (
-    <Build as="footer" steps={['border']} label="footer" className="border-t border-line">
+    <footer className="relative">
+      <Build as="div" steps={['border']} label="rule" aria-hidden="true" className="absolute inset-x-0 top-0 h-0 border-t border-line" />
       <Build
         as="div"
         steps={['text']}
@@ -65,6 +66,6 @@ export function Footer() {
         <p>Build animation inspired by Swarm by Joel Califa.</p>
         <p>© 2026 {profile.name}</p>
       </Build>
-    </Build>
+    </footer>
   )
 }

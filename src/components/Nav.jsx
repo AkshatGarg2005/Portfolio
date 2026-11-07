@@ -6,7 +6,9 @@ import { CursorMark, RebuildIcon } from './Icons.jsx'
 export function Nav() {
   const engine = useSwarm()
   return (
-    <Build as="header" steps={['border']} label="header" className="border-b border-line">
+    <header className="relative">
+      {/* The bottom rule is its own element, so the nav text needn't wait for the Pen. */}
+      <Build as="div" steps={['border']} label="rule" aria-hidden="true" className="absolute inset-x-0 bottom-0 h-0 border-b border-line" />
       <nav aria-label="Main" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Build
           as="a"
@@ -49,6 +51,6 @@ export function Nav() {
           </button>
         </div>
       </nav>
-    </Build>
+    </header>
   )
 }

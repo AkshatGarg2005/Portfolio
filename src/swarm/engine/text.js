@@ -26,17 +26,19 @@ export function collectTextNodes(root) {
   return out
 }
 
-export function buildPlan(el) {
+// Each text node picks its own mode. Headings and short text type letter by
+// letter; longer lines and paragraphs type a word at a time. `typing: 'char'`
+// on the element forces letter by letter.
+export function buildPlan(el, typing) {
   const nodes = collectTextNodes(el)
   let chars = 0
-  // Each text node picks its own mode: a title types letter by letter, a long
-  // sentence next to it types a word at a time.
   const units = [] // { node, start, end, text, word, nodeChars }
   for (const node of nodes) {
     const s = node.nodeValue
     const nodeChars = s.replace(/\s+/g, '').length
     chars += nodeChars
-    const word = nodeChars > TIMING.wordModeAt
+    const inHeading = !!node.parentElement?.closest('h1, h2, h3, h4, h5, h6')
+    const word = typing !== 'char' && !inHeading && nodeChars > TIMING.wordModeAt
     let i = 0
     while (i < s.length) {
       if (WS.test(s[i])) {
@@ -84,10 +86,12 @@ export function buildPlan(el) {
 // text (no DOM changes needed) or the unit spans while the text is split.
 export function measureUnits(plan, rootRect) {
   for (const box of plan.inner) {
+    // Layout size (ignores rotate/scale), so a locked box keeps its real size.
+    const cs = getComputedStyle(box.el)
     const r = box.el.getBoundingClientRect()
-    box.w = r.width
-    box.h = r.height
-    box.display = getComputedStyle(box.el).display
+    box.w = parseFloat(cs.width) || r.width
+    box.h = parseFloat(cs.height) || r.height
+    box.display = cs.display
   }
   const range = plan.split ? null : document.createRange()
   for (let i = 0; i < plan.units.length; i++) {
@@ -178,9 +182,13 @@ export function typingDelays(plan, rnd) {
     const u = plan.units[i]
     const prev = plan.units[i - 1]
     if (u.word) {
-      // A paragraph takes 1–3 s in total, so each word gets a share of that.
+      // A long paragraph takes 1–3 s in total; a single line is quicker.
+      // Each word gets a share of that time.
       if (!pace.has(u.node)) {
-        const total = Math.min(TIMING.paragraphMax, Math.max(TIMING.paragraphMin, u.nodeChars * TIMING.paragraphPerChar))
+        const total =
+          u.nodeChars > TIMING.paragraphAt
+            ? Math.min(TIMING.paragraphMax, Math.max(TIMING.paragraphMin, u.nodeChars * TIMING.paragraphPerChar))
+            : u.nodeChars * TIMING.linePerChar
         pace.set(u.node, (total * rnd(0.9, 1.1)) / words.get(u.node))
       }
       const base = pace.get(u.node)

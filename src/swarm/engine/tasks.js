@@ -144,13 +144,17 @@ function* textStep(engine, agent, item) {
     agent.x += (c.x + 4 - agent.x) * k
     agent.y += (c.y + c.h * 0.92 - agent.y) * k
   }
-  yield* agent.moveTo(() => {
-    const c = caret()
-    return { x: c.x + 4, y: c.y + c.h * 0.92 }
-  })
+  // Typists hop between nearby lines all the time, so they move a bit quicker.
+  yield* agent.moveTo(
+    () => {
+      const c = caret()
+      return { x: c.x + 4, y: c.y + c.h * 0.92 }
+    },
+    { speed: 1.15 },
+  )
   engine.showItem(item)
   d.select(item)
-  yield* wait(rand(20, 40), follow)
+  follow(16)
 
   const delays = typingDelays(plan, rand)
   let acc = 0
@@ -166,7 +170,6 @@ function* textStep(engine, agent, item) {
     }
     follow(dt)
   }
-  yield* wait(30, follow)
   engine.finishText(item)
   engine.completeStep(item)
 }
@@ -184,7 +187,7 @@ function* borderStep(engine, agent, item) {
   d.pen(r.x, r.y, r.w, r.h, path.d, path.len)
   d.select(item)
   const pt = { x: 0, y: 0 }
-  const dur = clamp(path.len * 0.42, 420, 1250)
+  const dur = clamp(path.len * 0.42, 420, 950)
   yield* tween(dur, (t) => {
     r = engine.rectOf(item)
     const dist = easeInOutSine(t) * path.len

@@ -399,6 +399,159 @@
   }
 }
 
+/* Education: timeline nodes and score meters. */
+.edu-card {
+  transition: border-color 0.25s ease;
+}
+.edu-card.is-current {
+  border-color: color-mix(in srgb, var(--tone) 40%, transparent);
+}
+/* Timeline segment from this card's node (28px down, 14px tall) to the next
+   card's node, across the 1rem gap between cards. */
+.edu-card:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 42px;
+  left: -19px;
+  height: calc(100% - 42px + 1rem + 28px);
+  border-left: 2px dashed var(--color-line-strong);
+}
+@media (min-width: 640px) {
+  .edu-card:not(:last-child)::before {
+    left: -23px;
+  }
+}
+.edu-node {
+  border-color: var(--tone);
+  background: var(--color-canvas);
+}
+.edu-card.is-current .edu-node {
+  background: var(--tone);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone) 22%, transparent);
+}
+.edu-meter {
+  transform-origin: left center;
+}
+
+/* About: a board with its own finer dot grid, and sticky notes. */
+.about-board {
+  background-image: radial-gradient(circle at 1px 1px, rgb(148 163 203 / 0.13) 1px, transparent 0);
+  background-size: 16px 16px;
+}
+.sticky-note {
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.25) inset,
+    0 14px 26px -12px rgb(0 0 0 / 0.75);
+  transition:
+    scale 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.sticky-note.is-dragging {
+  cursor: grabbing;
+  scale: 1.05;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.25) inset,
+    0 24px 40px -14px rgb(0 0 0 / 0.85);
+}
+
+@media (hover: hover) {
+  .edu-card:hover {
+    border-color: color-mix(in srgb, var(--tone) 55%, transparent);
+  }
+  .sticky-note:hover {
+    scale: 1.03;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* The degree still in progress has a live dot. */
+  .live-dot {
+    animation: live-pulse 1.8s ease-out infinite;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .edu-card:hover .edu-meter {
+    animation: meter-fill 0.9s cubic-bezier(0.3, 0.9, 0.3, 1);
+  }
+}
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(45 212 167 / 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 6px rgb(45 212 167 / 0);
+  }
+}
+@keyframes meter-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ------------------------------------------------------------------ hero */
+
+/* The hero picture: a desk that hovers like a platform. Its blue underlight
+   spills onto the canvas and dims as it rises, a soft halo sits behind it,
+   and it turns toward the pointer (Hero.jsx sets --tx and --ty). */
+.hero-art {
+  --tx: 0;
+  --ty: 0;
+}
+.hero-img {
+  transform: perspective(1400px) rotateX(calc(var(--ty) * -6deg)) rotateY(calc(var(--tx) * 10deg));
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.hero-glow {
+  position: absolute;
+  pointer-events: none;
+  transition:
+    opacity 0.9s ease,
+    translate 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.hero-halo {
+  inset: 0 2% 12% 22%;
+  background: radial-gradient(closest-side, rgb(56 189 248 / 0.2), rgb(139 92 246 / 0.1) 60%, transparent);
+  translate: calc(var(--tx) * -18px) calc(var(--ty) * -12px);
+}
+.hero-spill {
+  right: 4%;
+  bottom: -9%;
+  left: 4%;
+  height: 30%;
+}
+.hero-spill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(closest-side, rgb(59 130 246 / 0.5), rgb(59 130 246 / 0.14) 55%, transparent);
+}
+/* While the swarm builds, the light comes on once the picture is in. */
+html[data-swarm='play'] [data-build]:not([data-sw='done']) > .hero-glow {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-img {
+    animation: hero-float 7s ease-in-out infinite;
+  }
+  .hero-spill::before {
+    animation: hero-spill 7s ease-in-out infinite;
+  }
+}
+.hero-art.is-away .hero-img,
+.hero-art.is-away .hero-spill::before {
+  animation-play-state: paused;
+}
+@keyframes hero-float {
+  50% {
+    translate: 0 -12px;
+  }
+}
+@keyframes hero-spill {
+  50% {
+    opacity: 0.55;
+    scale: 0.86 0.8;
+  }
+}
+
 /* ------------------------------------------------------------------ swarm */
 
 /* Build states. Unbuilt elements keep their layout but are invisible and

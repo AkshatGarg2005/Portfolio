@@ -6,12 +6,14 @@ export const profile = {
   github: 'https://github.com/AkshatGarg2005',
   linkedin: 'https://www.linkedin.com/in/akshat-garg-vitbhopal/',
   resume: '/Akshat_Garg_Resume.pdf',
+  // Made with scripts/make-photo.mjs. Keep sizes in sync with Hero.jsx and
+  // the preload in index.html.
   photo: {
-    src: '/akshat-800.jpg',
-    srcSet: '/akshat-480.jpg 480w, /akshat-800.jpg 800w',
-    sizes: '(min-width: 1024px) 360px, (min-width: 640px) 260px, 168px',
-    width: 800,
-    height: 1067,
+    src: '/akshat-960.webp',
+    srcSet: '/akshat-480.webp 480w, /akshat-640.webp 640w, /akshat-960.webp 960w, /akshat-1200.webp 1200w',
+    sizes: '(min-width: 1536px) 600px, (min-width: 1280px) 552px, (min-width: 1024px) 512px, (min-width: 640px) 460px, 360px',
+    width: 960,
+    height: 805,
   },
 }
 
@@ -102,11 +104,43 @@ export const certifications = [
   { name: 'Oracle Certified Java Foundations Associate', issuer: 'Oracle', date: 'Jul 2025', level: 'Foundations', icon: 'java' },
 ]
 
-export const education = {
-  school: 'Vellore Institute of Technology, Bhopal',
-  degree: 'B.Tech, Computer Science and Engineering',
-  years: '2023–2027 (expected)',
-  cgpa: '8.10/10',
-}
+// Newest first. `value` (0–1) sets the length of the score meter.
+export const education = [
+  {
+    title: 'B.Tech, Computer Science and Engineering',
+    school: 'Vellore Institute of Technology, Bhopal',
+    years: '2023–2027 (expected)',
+    score: '8.10',
+    scoreLabel: 'CGPA / 10',
+    value: 0.81,
+    tone: 'mint',
+    current: true,
+  },
+  {
+    title: 'Class XII',
+    school: "St. Luke's Senior Secondary School, Solan",
+    years: '2023',
+    score: '83%',
+    scoreLabel: 'Percentage',
+    value: 0.83,
+    tone: 'sky',
+  },
+  {
+    title: 'Class X',
+    school: "St. Luke's Senior Secondary School, Solan",
+    years: '2021',
+    score: '90.17%',
+    scoreLabel: 'Percentage',
+    value: 0.9017,
+    tone: 'amber',
+  },
+]
 
 export const about = "Off-screen, I'm into cinema and storytelling, and hunting down local food spots."
+
+// Sticky notes on the About board, taken from the sentence above.
+export const interests = [
+  { label: 'Cinema', icon: 'film', tone: 'pink' },
+  { label: 'Storytelling', icon: 'book', tone: 'amber' },
+  { label: 'Local food spots', icon: 'pin', tone: 'mint' },
+]

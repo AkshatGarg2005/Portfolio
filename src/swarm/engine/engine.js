@@ -276,6 +276,9 @@ export class SwarmEngine {
       if (active && wasSkipped !== it.skipped) (it.skipped ? vanished : appeared).push(it)
       const st = it.style
       st.display = cs.display
+      // Layout size, unaffected by rotate/scale, for size locks while typing.
+      st.w = parseFloat(cs.width) || b.width
+      st.h = parseFloat(cs.height) || b.height
       st.radius = parseFloat(cs.borderTopLeftRadius) || 0
       st.bg = cs.backgroundColor
       st.borderWidths = [cs.borderTopWidth, cs.borderRightWidth, cs.borderBottomWidth, cs.borderLeftWidth].map(
@@ -287,7 +290,7 @@ export class SwarmEngine {
         st.borderColor = side >= 0 ? colors[side] : 'transparent'
       }
       if (it.opts.steps.includes('text') && (it.state !== 'done' || this.mode === 'loading')) {
-        if (!it.text || (!it.text.split && it.text.nodes.some((n) => !n.isConnected))) it.text = buildPlan(it.el)
+        if (!it.text || (!it.text.split && it.text.nodes.some((n) => !n.isConnected))) it.text = buildPlan(it.el, it.opts.typing)
         measureUnits(it.text, rr)
         const first = it.text.nodes[0]
         if (it.opts.group && first && first.parentElement && it.text.units.length) {
@@ -352,8 +355,8 @@ export class SwarmEngine {
   lock(it) {
     const fixed = (d) => d !== 'inline' && d !== 'contents' && d !== 'none'
     if (fixed(it.style.display)) {
-      it.el.style.width = `${it.rect.w}px`
-      it.el.style.height = `${it.rect.h}px`
+      it.el.style.width = `${it.style.w}px`
+      it.el.style.height = `${it.style.h}px`
     }
     if (it.text) {
       for (const b of it.text.inner) {

@@ -94,6 +94,27 @@ export const CupIcon = (p) => (
   </svg>
 )
 
+export const FilmIcon = (p) => (
+  <svg {...base} {...p}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4" />
+  </svg>
+)
+
+export const BookIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5c-3.5-.5-6.5 0-8.5 1.5z" />
+    <path d="M12 6.5v13" />
+  </svg>
+)
+
+export const PinIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" />
+    <circle cx="12" cy="10" r="2.4" />
+  </svg>
+)
+
 // Outline diamond: a design tool's mark for a component instance.
 export const InstanceIcon = (p) => (
   <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" {...p}>
