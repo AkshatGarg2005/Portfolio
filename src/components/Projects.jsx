@@ -3,9 +3,13 @@ import { Build } from '../swarm/Build.jsx'
 import { PALETTE } from '../swarm/engine/config.js'
 import { SectionHeading } from './SectionHeading.jsx'
 import { ArrowUpRight, RegMark } from './Icons.jsx'
+import { PROJECT_VISUALS } from './ProjectVisuals.jsx'
 
-function ProjectCard({ project }) {
+function ProjectCard({ project, index }) {
   const display = project.url.replace(/^https?:\/\//, '')
+  const Visual = PROJECT_VISUALS[project.visual]
+  // Visual and text swap sides down the page on wide screens.
+  const flip = index % 2 === 1
   return (
     <Build
       as="article"
@@ -13,59 +17,60 @@ function ProjectCard({ project }) {
       steps={['box', 'border']}
       label="card"
       style={{ '--accent': PALETTE[project.accent].hex }}
-      className="grid gap-7 rounded-2xl border border-line bg-surface p-6 sm:p-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-0 lg:p-10"
+      className="project-card grid gap-7 rounded-2xl border border-line bg-surface p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)] lg:gap-10 lg:p-8"
     >
-      <div className="flex flex-col items-start lg:pr-10">
+      {Visual && (
+        <div className={`lg:self-center ${flip ? 'lg:order-2' : ''}`}>
+          <Visual />
+        </div>
+      )}
+      <div className="flex flex-col px-1 sm:px-2 lg:py-2">
         <Build as="header" steps={['text']} label="header">
           <p className="flex items-center gap-2.5 font-mono text-[13px] text-muted">
             <span className="size-2.5 rounded-[3px] bg-(--accent)" aria-hidden="true" />
             {project.date}
           </p>
-          <h3 className="mt-4 font-display text-[2rem] leading-tight font-semibold tracking-[-0.02em] sm:text-[2.5rem]">
+          <h3 className="mt-3 font-display text-[2rem] leading-tight font-semibold tracking-[-0.025em] sm:text-[2.6rem]">
             {project.name}
           </h3>
-          <p className="mt-1.5 text-[17px] text-muted">{project.summary}</p>
+          <p className="mt-1 text-[17px] text-muted">{project.summary}</p>
         </Build>
-        <Build
-          as="ul"
-          steps={['text']}
-          label="stack"
-          aria-label={`${project.name} tech stack`}
-          className="mt-6 flex flex-wrap gap-2"
-        >
-          {project.stack.map((s) => (
-            <li key={s} className="chip">
-              {s}
-            </li>
+        <ul className="mt-6 grid gap-3.5">
+          {project.points.map((point) => (
+            <Build
+              as="li"
+              key={point}
+              steps={['text']}
+              label="li"
+              className="relative pl-6 text-[15.5px] leading-relaxed text-ink/90 before:absolute before:top-[0.8em] before:left-0 before:h-px before:w-3 before:bg-(--accent)"
+            >
+              {point}
+            </Build>
           ))}
-        </Build>
-        <Build
-          as="a"
-          href={project.url}
-          target="_blank"
-          rel="noopener"
-          steps={['text']}
-          label="link"
-          aria-label={`${project.name} live site: ${display}`}
-          className="text-link mt-7 inline-flex items-center gap-2 font-mono text-sm text-ink lg:mt-auto lg:pt-8"
-        >
-          {display}
-          <ArrowUpRight className="size-4" />
-        </Build>
-      </div>
-      <ul className="grid content-start gap-4 border-t border-line pt-7 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
-        {project.points.map((point) => (
-          <Build
-            as="li"
-            key={point}
-            steps={['text']}
-            label="li"
-            className="relative pl-6 text-[15.5px] leading-relaxed text-ink/90 before:absolute before:top-[0.8em] before:left-0 before:h-px before:w-3 before:bg-(--accent)"
-          >
-            {point}
+        </ul>
+        <div className="mt-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-t border-line pt-5 lg:mt-auto">
+          <Build as="ul" steps={['text']} label="stack" aria-label={`${project.name} tech stack`} className="flex flex-wrap gap-2">
+            {project.stack.map((s) => (
+              <li key={s} className="chip">
+                {s}
+              </li>
+            ))}
           </Build>
-        ))}
-      </ul>
+          <Build
+            as="a"
+            href={project.url}
+            target="_blank"
+            rel="noopener"
+            steps={['text']}
+            label="link"
+            aria-label={`${project.name} live site: ${display}`}
+            className="text-link inline-flex items-center gap-2 font-mono text-sm text-ink"
+          >
+            {display}
+            <ArrowUpRight className="size-4" />
+          </Build>
+        </div>
+      </div>
     </Build>
   )
 }
@@ -76,8 +81,8 @@ export function Projects() {
       <RegMark className="top-16 -left-2 hidden xl:block" />
       <SectionHeading>Projects</SectionHeading>
       <div className="mt-10 grid gap-6 sm:mt-12">
-        {projects.map((p) => (
-          <ProjectCard key={p.name} project={p} />
+        {projects.map((p, i) => (
+          <ProjectCard key={p.name} project={p} index={i} />
         ))}
       </div>
     </section>

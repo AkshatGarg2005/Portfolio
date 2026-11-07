@@ -75,6 +75,11 @@ All text, links and dates live in `src/content.js`. The sections are in
   regenerate them, e.g. on macOS:
   `sips -s format jpeg -s formatOptions 60 --resampleWidth 800 public/akshat.jpg --out public/akshat-800.jpg`
   (and the same with `480` and quality `62`).
+- **Project visuals:** each project card has a lo-fi wireframe of the app in
+  `src/components/ProjectVisuals.jsx`, picked by the project's `visual` key in
+  `content.js`. They act out the app on hover. The QR code in the IntelliQrHelp
+  phone is real and opens the live app; if that link changes, run
+  `npm i -D qrcode && node scripts/make-qr.mjs <new url>`.
 - **Resume:** replace `public/Akshat_Garg_Resume.pdf`.
 - **Link preview image:** `public/og.jpg` (1200 × 630) is a screenshot of the
   hero. Retake it if the hero changes.

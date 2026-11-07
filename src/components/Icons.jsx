@@ -43,6 +43,33 @@ export const RebuildIcon = (p) => (
   </svg>
 )
 
+export const CheckIcon = (p) => (
+  <svg {...base} strokeWidth={3} {...p}>
+    <path d="m5 12.5 4.5 4.5L19 7.5" />
+  </svg>
+)
+
+export const LeafIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14z" />
+    <path d="M5 19 13 11" />
+  </svg>
+)
+
+export const SparkleIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M12 3.5 13.9 10l6.6 2-6.6 2L12 20.5 10.1 14l-6.6-2 6.6-2z" fill="currentColor" />
+  </svg>
+)
+
+// A paper plane, the shape of a sent alert.
+export const PlaneIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M21 3 3 10.5l7 2.5 2.5 7z" />
+    <path d="m10 13 4.5-4.5" />
+  </svg>
+)
+
 // Outline diamond: a design tool's mark for a component instance.
 export const InstanceIcon = (p) => (
   <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" {...p}>

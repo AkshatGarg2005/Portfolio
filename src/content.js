@@ -31,6 +31,7 @@ export const projects = [
     stack: ['React', 'Firebase', 'Firestore'],
     url: 'https://tinyurl.com/om-academy',
     accent: 'coral',
+    visual: 'om',
     points: [
       'Replaced paper registers for 414 students: attendance, test reports, fees, enrollment',
       '3-tier role-based access (Admin → Teacher → Student) using scoped Firestore queries',
@@ -44,6 +45,7 @@ export const projects = [
     stack: ['React', 'Firebase', 'Gemini AI', 'Tailwind'],
     url: 'https://tinyurl.com/nourishfy',
     accent: 'mint',
+    visual: 'nourishfy',
     points: [
       'Turns health inputs (deficiencies, exclusions, symptoms) into personalized meal plans and grocery lists via the Gemini API',
       '6 Firestore collections with live listeners, Firebase Auth, 39 React components including 11 custom headless UI primitives',
@@ -57,6 +59,7 @@ export const projects = [
     stack: ['React 19', 'Firebase', 'Telegram Bot API'],
     url: 'https://tinyurl.com/intelliqrhelp',
     accent: 'violet',
+    visual: 'intelliqr',
     points: [
       'QR medical profile (blood group, allergies, conditions, next of kin) that a responder reads with one scan, with no app or login',
       '1-click SOS sends real-time alerts to chosen contacts through Telegram',

@@ -124,7 +124,8 @@ export class SwarmEngine {
     item.el = el
     item.opts = opts
     item.label = opts.label || el.tagName.toLowerCase()
-    item.img = opts.steps.includes('image') ? (el.tagName === 'IMG' ? el : el.querySelector('img')) : null
+    // The picture an image step wipes in: an <img> or an inline <svg>.
+    item.img = opts.steps.includes('image') ? (el.matches('img, svg') ? el : el.querySelector('img, svg')) : null
     el.__swItem = item
     this.orderDirty = true
     // Anything that mounts mid-build simply appears finished.
@@ -647,7 +648,7 @@ export class SwarmEngine {
         ]).then(() => document.fonts.ready)
       : Promise.resolve()
     const images = []
-    for (const it of this.items.values()) if (it.img) images.push(imageReady(it.img))
+    for (const it of this.items.values()) if (it.img instanceof HTMLImageElement) images.push(imageReady(it.img))
     return Promise.race([Promise.all([fonts, ...images]).catch(() => {}), sleep(4000)])
   }
 
