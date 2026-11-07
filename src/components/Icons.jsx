@@ -70,6 +70,30 @@ export const PlaneIcon = (p) => (
   </svg>
 )
 
+export const CloudIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.6 4.5 4.5 0 0 0 7 18.5z" />
+  </svg>
+)
+
+// Stacked layers: a solution's architecture.
+export const LayersIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="m12 3 9 4.5-9 4.5-9-4.5z" />
+    <path d="m3 12 9 4.5 9-4.5" />
+    <path d="m3 16.5 9 4.5 9-4.5" />
+  </svg>
+)
+
+// A steaming cup, the old Java mark's idea without the logo.
+export const CupIcon = (p) => (
+  <svg {...base} {...p}>
+    <path d="M4 10h12v4.5A5.5 5.5 0 0 1 10.5 20h-1A5.5 5.5 0 0 1 4 14.5z" />
+    <path d="M16 11.5h1.5a2.5 2.5 0 0 1 0 5H16" />
+    <path d="M8 3.5c-.8 1 .8 2 0 3M12 3.5c-.8 1 .8 2 0 3" />
+  </svg>
+)
+
 // Outline diamond: a design tool's mark for a component instance.
 export const InstanceIcon = (p) => (
   <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" {...p}>

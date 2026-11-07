@@ -93,11 +93,13 @@ export const skills = [
   },
 ]
 
+// Newest first. The page shows them as a path from oldest to newest.
+// `level` is the issuer's certification level; `icon` picks the emblem.
 export const certifications = [
-  { name: 'AWS Certified Solutions Architect – Associate', issuer: 'AWS', date: 'Jun 2026' },
-  { name: 'AWS Certified AI Practitioner', issuer: 'AWS', date: 'May 2026' },
-  { name: 'AWS Certified Cloud Practitioner', issuer: 'AWS', date: 'May 2026' },
-  { name: 'Oracle Certified Java Foundations Associate', issuer: 'Oracle', date: 'Jul 2025' },
+  { name: 'AWS Certified Solutions Architect – Associate', issuer: 'AWS', date: 'Jun 2026', level: 'Associate', icon: 'architect' },
+  { name: 'AWS Certified AI Practitioner', issuer: 'AWS', date: 'May 2026', level: 'Foundational', icon: 'ai' },
+  { name: 'AWS Certified Cloud Practitioner', issuer: 'AWS', date: 'May 2026', level: 'Foundational', icon: 'cloud' },
+  { name: 'Oracle Certified Java Foundations Associate', issuer: 'Oracle', date: 'Jul 2025', level: 'Foundations', icon: 'java' },
 ]
 
 export const education = {

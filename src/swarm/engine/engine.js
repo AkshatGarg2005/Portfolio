@@ -479,6 +479,12 @@ export class SwarmEngine {
   depsDone(it) {
     const parent = it.opts.parentId ? this.items.get(it.opts.parentId) : null
     if (parent && !parent.skipped && parent.state !== 'done') return false
+    // waitFor: every member of that clone group has to be placed first.
+    if (it.opts.waitFor) {
+      for (const other of this.items.values()) {
+        if (other.opts.group === it.opts.waitFor && !other.skipped && other.state !== 'done') return false
+      }
+    }
     if (it.steps[it.stepIndex] === 'clone') {
       const s = this.groupSource(it)
       if (s && s.state !== 'done') return false
@@ -548,7 +554,7 @@ export class SwarmEngine {
       a.appear(i * 60)
       this.agents.push(a)
     })
-    this.holdUntil = performance.now() + 380
+    this.holdUntil = performance.now() + 260
   }
 
   spawnExtra() {

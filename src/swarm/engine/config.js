@@ -46,7 +46,7 @@ export const KINDS = Object.keys(KIND_ROLE)
 export const TIMING = {
   // Typing
   charMin: 25,
-  charMax: 40,
+  charMax: 36,
   wordModeAt: 40, // a text node longer than this many characters types a word at a time
   paragraphMin: 1000,
   paragraphMax: 2000,

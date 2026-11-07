@@ -308,6 +308,97 @@
   }
 }
 
+/* Certifications: a path of cards joined by prototype-style connections,
+   with a measurement line for the time it took. */
+.cert-card {
+  transition: border-color 0.25s ease;
+}
+.cert-card.is-latest {
+  border-color: color-mix(in srgb, var(--issuer) 45%, transparent);
+}
+.cert-flow-head {
+  position: absolute;
+  left: -6px;
+  bottom: -2px;
+  border-top: 7px solid var(--color-select);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  opacity: 0.8;
+}
+.cert-flow::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-select);
+  opacity: 0;
+}
+@media (min-width: 1024px) {
+  .cert-flow-head {
+    left: auto;
+    right: -2px;
+    bottom: auto;
+    top: -6px;
+    border: 5px solid transparent;
+    border-right: 0;
+    border-left: 7px solid var(--color-select);
+  }
+  .cert-flow::before {
+    left: 0;
+    top: -4px;
+  }
+}
+.cert-measure::before,
+.cert-measure::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  width: 1px;
+  height: 9px;
+  background: var(--color-guide);
+}
+.cert-measure::before {
+  left: 0;
+}
+.cert-measure::after {
+  right: 0;
+}
+@media (hover: hover) {
+  .cert-card:hover {
+    border-color: color-mix(in srgb, var(--issuer) 60%, transparent);
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .cert-hex {
+    transition: transform 0.7s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  .cert-card:hover .cert-hex {
+    transform: rotate(60deg);
+  }
+  /* Hovering the path plays it: a dot runs along each connection in turn. */
+  .cert-path:hover .cert-flow::before {
+    animation: flow-dot 1.05s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.35s);
+  }
+}
+@keyframes flow-dot {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  20%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 6px);
+    opacity: 0;
+  }
+}
+
 /* ------------------------------------------------------------------ swarm */
 
 /* Build states. Unbuilt elements keep their layout but are invisible and

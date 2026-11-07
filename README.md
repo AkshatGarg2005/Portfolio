@@ -114,6 +114,9 @@ Mark anything buildable with `<Build>`:
   rest are Option-dragged copies, and a Typist then retypes their text.
 - **`guide="y"`** snaps to a horizontal guide instead of the default vertical
   one.
+- **`waitFor="<group>"`** holds an element back until every item in that clone
+  group is placed. The certificate arrows use it so they never point at empty
+  space.
 
 A few rules the engine keeps:
 
