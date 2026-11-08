@@ -98,12 +98,14 @@ All text, links and dates live in `src/content.js`. The sections are in
 | `SwarmProvider` | `src/swarm/SwarmProvider.jsx` | Creates the engine, starts it on first visit, handles Esc and Alt+Shift+S |
 | `<Build>` / `useBuildable` | `src/swarm/Build.jsx` | Registers an element and its build steps |
 | `SwarmOverlay` | `src/swarm/SwarmOverlay.jsx` | Full-height layer for cursors, guides, outlines, badges and the caret |
-| `Toolbar` | `src/swarm/Toolbar.jsx` | Agent count, layer count, speed, Tour, Skip, Go live, Replay |
+| `Toolbar` | `src/swarm/Toolbar.jsx` | Agent count, layer count, sound, speed, Tour, Skip, Go live, Replay |
+| `StartCard` | `src/swarm/StartCard.jsx` | First visit: play the build with or without sound |
 | Engine | `src/swarm/engine/engine.js` | Measuring, scheduling, scroll following, extra agents, Tour, end state |
 | Agents | `src/swarm/engine/agent.js` | Cursor, name pill, bezier movement, per-agent drawing chrome |
 | Steps | `src/swarm/engine/tasks.js` | What each role does: box, image, text, border, guide, clone |
 | Text | `src/swarm/engine/text.js` | Splits text into hidden per-character or per-word spans and restores it |
 | Timing | `src/swarm/engine/config.js` | Agent names, colours, roles, typing and movement speeds |
+| Sound | `src/swarm/engine/sound.js` | Build sounds, made with the Web Audio API (no audio files) |
 
 Mark anything buildable with `<Build>`:
 
@@ -143,6 +145,7 @@ A few rules the engine keeps:
 
 | Control | Does |
 | --- | --- |
+| Speaker | Build sounds on or off. Remembered on the visitor's device |
 | 1× / 2× / 3× | Build speed (one button that cycles on phones) |
 | Tour | Auto-scrolls with the build. On by default; scrolling yourself turns it off |
 | Skip | Finishes the page at once, cursors and design chrome still showing |
@@ -151,7 +154,31 @@ A few rules the engine keeps:
 | Replay, Rebuild or <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> | Builds the page again from the top |
 
 When the build finishes on its own, the page glides back to the top after a
-short pause, unless the visitor has started scrolling.
+short pause, unless the visitor has started scrolling. With Tour off, the swarm
+works near wherever the visitor is reading first, then finishes the rest of the
+page.
+
+## Sound
+
+Each agent action has its own short sound, panned to where the agent is on
+screen: key clicks for the Typists, a swoosh and a soft drop for the Boxer, a
+marker scribble for the Pen, a snap for the Ruler, two quick notes for the
+Cloner and a sparkle as the photo wipes in. Each agent's notes are in its own
+pitch, so the six arriving play a short run up the scale. A quiet pad plays
+underneath and brightens as the page fills in, and a chord marks the finish.
+
+Browsers only allow sound after a click, tap or key press, so a first visit
+opens on a start card (`src/swarm/StartCard.jsx`): **Play with sound** or
+**Play muted**. The page gets ready behind it, so the build starts at once.
+With no choice made, the build starts muted after 5 seconds (`GATE_MS` in
+`engine.js`); the countdown only runs while the tab is visible, so a page
+opened in a background tab waits. After a muted start, the speaker button in
+the toolbar pulses and sound starts at the visitor's first click.
+
+Rebuild and Replay are clicks, so they skip the card and play with sound.
+Visitors who muted before skip it too, and reduced-motion visitors never see
+the intro. Muting is remembered. To change the overall level, edit `VOLUME` at
+the top of `src/swarm/engine/sound.js`.
 
 Visitors who prefer reduced motion get the finished page with a Rebuild button,
 and the intro never plays on its own.

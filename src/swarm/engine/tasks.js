@@ -68,6 +68,7 @@ function* dragFrame(engine, agent, item) {
   let r = engine.rectOf(item)
   yield* wait(rand(60, 120))
   const dur = clamp(240 + Math.hypot(r.w, r.h) * 0.55, 340, 880)
+  engine.sound.drag(agent, dur)
   yield* tween(dur, (t) => {
     r = engine.rectOf(item)
     const e = easeInOutCubic(t)
@@ -84,6 +85,7 @@ function* boxStep(engine, agent, item) {
   const d = agent.decor
   yield* dragFrame(engine, agent, item)
   engine.showItem(item)
+  engine.sound.place(agent)
   d.select(item)
   yield* wait(240, () => {
     const r = engine.rectOf(item)
@@ -107,6 +109,7 @@ function* imageStep(engine, agent, item) {
   const img = item.img
   yield* wait(120)
   d.hide('draw')
+  engine.sound.wipe(agent, 680)
   yield* tween(680, (t) => {
     const e = easeInOutSine(t)
     if (img) img.style.clipPath = `inset(0 0 ${((1 - e) * 100).toFixed(2)}% 0)`
@@ -162,12 +165,14 @@ function* textStep(engine, agent, item) {
   while (next < n) {
     const dt = yield
     acc += dt
+    const before = next
     while (next < n && acc >= delays[next]) {
       acc -= delays[next]
       plan.split.spans[next].classList.add('on')
       typed = next
       next++
     }
+    if (next > before) engine.sound.key(agent)
     follow(dt)
   }
   engine.finishText(item)
@@ -188,6 +193,7 @@ function* borderStep(engine, agent, item) {
   d.select(item)
   const pt = { x: 0, y: 0 }
   const dur = clamp(path.len * 0.42, 420, 950)
+  engine.sound.pen(agent, dur)
   yield* tween(dur, (t) => {
     r = engine.rectOf(item)
     const dist = easeInOutSine(t) * path.len
@@ -237,6 +243,7 @@ function* guideStep(engine, agent, item) {
     })
   }
   guide.placed()
+  engine.sound.snap(agent)
   engine.showItem(item)
   d.select(item)
   yield* wait(90)
@@ -279,6 +286,7 @@ function* cloneStep(engine, agent, item) {
   yield* wait(90)
   s = S()
   d.ghost(src, s.x, s.y, s.w, s.h)
+  engine.sound.clone(agent)
   d.unselect()
   yield* agent.moveTo(
     () => {
@@ -298,6 +306,7 @@ function* cloneStep(engine, agent, item) {
   const t = T()
   d.ghost(src, t.x, t.y, t.w, t.h)
   engine.showItem(item)
+  engine.sound.place(agent)
   d.select(item)
   yield* wait(70)
   d.hide('ghost')

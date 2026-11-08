@@ -1,10 +1,14 @@
 import { Agent } from './agent.js'
 import { BASE_AGENTS, COLOR_ORDER, EXTRA_NAMES, KIND_ROLE, ROLES, TIMING } from './config.js'
 import { clamp, rand } from './math.js'
+import { SwarmSound } from './sound.js'
 import { runStep } from './tasks.js'
 import { buildPlan, measureUnits, restoreText, splitText } from './text.js'
 
 export const PLAYED_KEY = 'swarm:played'
+
+// How long the start card waits before the build starts on its own (muted).
+export const GATE_MS = 5000
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -60,7 +64,9 @@ export class SwarmEngine {
     this.root = null
     this.overlay = null
     this.layers = null
-    this.snapshot = { mode: 'idle', speed: 1, tour: true, built: 0, total: 0, agents: [] }
+    this.sound = new SwarmSound(this)
+    this.gate = null
+    this.snapshot = { mode: 'idle', speed: 1, tour: true, sound: this.sound.state, gate: 0, built: 0, total: 0, agents: [] }
   }
 
   // ---------------------------------------------------------------- React glue
@@ -76,18 +82,23 @@ export class SwarmEngine {
     const { built, total } = this.counts()
     const agents = []
     for (const a of this.agents) if (!a.leaving) agents.push(a.colorName)
+    const sound = this.sound.state
+    // 0: no start card; Infinity: showing, countdown not started; else its end time.
+    const gate = this.gate ? this.gate.endsAt : 0
     const s = this.snapshot
     if (
       s.mode === this.mode &&
       s.speed === this.speed &&
       s.tour === this.tour &&
+      s.sound === sound &&
+      s.gate === gate &&
       s.built === built &&
       s.total === total &&
       s.agents.join() === agents.join()
     ) {
       return
     }
-    this.snapshot = { mode: this.mode, speed: this.speed, tour: this.tour, built, total, agents }
+    this.snapshot = { mode: this.mode, speed: this.speed, tour: this.tour, sound, gate, built, total, agents }
     for (const fn of this.listeners) fn()
   }
 
@@ -176,9 +187,11 @@ export class SwarmEngine {
     })
     this.ro.observe(root)
     if (document.fonts) document.fonts.addEventListener('loadingdone', this.onFonts)
+    this.sound.attach()
   }
 
   detach() {
+    this.clearGate()
     this.session++
     this.stopLoop()
     clearTimeout(this.leaveTimer)
@@ -191,6 +204,7 @@ export class SwarmEngine {
     document.removeEventListener('focusin', this.onFocus)
     if (document.fonts) document.fonts.removeEventListener('loadingdone', this.onFonts)
     this.ro?.disconnect()
+    this.sound.detach()
     this.mode = 'idle'
     this.root = null
     this.overlay = null
@@ -203,6 +217,8 @@ export class SwarmEngine {
     const dt = Math.max(16, now - this.scrollAt)
     this.scrollAt = now
     this.view.top = y
+    // Scrolling the blank page behind the start card isn't racing ahead.
+    if (this.gate) return
     if (this.expectScroll !== null && Math.abs(window.scrollY - this.expectScroll) < 3) return
     // The visitor scrolled: follow them, and stop touring.
     this.scrollSpeed = Math.max(this.scrollSpeed * 0.7, (dy / dt) * 1000)
@@ -555,6 +571,7 @@ export class SwarmEngine {
     BASE_AGENTS.forEach((cfg, i) => {
       const a = new Agent(this, { ...cfg, x: cx + rand(-30, 40), y: cy + rand(-10, 26) })
       a.appear(i * 60)
+      this.sound.join(a, i * 0.06)
       this.agents.push(a)
     })
     this.holdUntil = performance.now() + 260
@@ -595,6 +612,7 @@ export class SwarmEngine {
       y,
     })
     a.appear(0)
+    this.sound.join(a)
     this.agents.push(a)
   }
 
@@ -602,6 +620,7 @@ export class SwarmEngine {
     const v = this.view
     const toLeft = a.x < v.w / 2
     a.leave(toLeft ? -40 : v.w + 40, a.y + rand(-40, 40))
+    this.sound.leave(a)
   }
 
   clearAgents() {
@@ -611,7 +630,8 @@ export class SwarmEngine {
 
   // ------------------------------------------------------------- lifecycle
 
-  async start({ replay = false } = {}) {
+  // gate: show the start card first (a first visit with sound not muted).
+  async start({ replay = false, gate = false } = {}) {
     if (!this.root || this.mode === 'loading' || this.mode === 'building') return
     const session = ++this.session
     this.returnAt = null
@@ -631,6 +651,8 @@ export class SwarmEngine {
       window.scrollTo(0, 0)
     }
     this.setMode('loading')
+    // The page gets ready behind the start card, so Play starts at once.
+    const opened = gate ? this.waitGate() : null
     await this.ready()
     if (session !== this.session) return
     this.measure()
@@ -639,10 +661,24 @@ export class SwarmEngine {
     this.emit()
     if (replay) await sleep(420)
     if (session !== this.session) return
+    if (opened) {
+      const audio = await opened
+      if (session !== this.session) return
+      // Give the audio a moment to start, so the agents' arrival is heard.
+      if (audio) await Promise.race([audio, sleep(400)])
+      if (session !== this.session) return
+      if (window.scrollY > 2) {
+        this.expectScroll = 0
+        window.scrollTo(0, 0)
+      }
+      this.measure()
+    }
     this.boost = 1
     this.boostTarget = 1
     this.scrollSpeed = 0
+    this.lastUserScroll = -1e9
     this.tourY = null
+    this.sound.buildStart()
     this.spawnBase()
     this.setMode('building')
     this.loop()
@@ -661,7 +697,52 @@ export class SwarmEngine {
     return Promise.race([Promise.all([fonts, ...images]).catch(() => {}), sleep(4000)])
   }
 
+  // The start card: resolves when the visitor picks "Play with sound" or
+  // "Play muted", or when the countdown runs out. The countdown only runs
+  // while the tab is visible, so a page opened in a background tab waits.
+  waitGate() {
+    return new Promise((resolve) => {
+      const gate = { resolve, timer: 0, endsAt: Infinity, disarm: null }
+      const arm = () => {
+        if (this.gate !== gate || document.hidden) return
+        gate.disarm()
+        gate.endsAt = performance.now() + GATE_MS
+        gate.timer = setTimeout(() => this.openGate('timeout'), GATE_MS)
+        this.emit()
+      }
+      gate.disarm = () => document.removeEventListener('visibilitychange', arm)
+      document.addEventListener('visibilitychange', arm)
+      this.gate = gate
+      arm()
+      this.emit()
+    })
+  }
+
+  // how: 'sound' or 'muted' (the card's buttons, so inside a click) or 'timeout'.
+  openGate(how) {
+    const gate = this.gate
+    if (!gate) return
+    this.gate = null
+    clearTimeout(gate.timer)
+    gate.disarm()
+    let audio = null
+    if (how === 'sound') audio = this.sound.enable()
+    else if (how === 'muted') this.sound.mute()
+    gate.resolve(audio)
+    this.emit()
+  }
+
+  clearGate() {
+    const gate = this.gate
+    if (!gate) return
+    this.gate = null
+    clearTimeout(gate.timer)
+    gate.disarm()
+    this.emit()
+  }
+
   completeAll() {
+    this.clearGate()
     this.session++
     for (const a of this.agents) {
       if (a.extra) a.leaving = true
@@ -699,6 +780,7 @@ export class SwarmEngine {
     if (this.mode === 'live' || this.mode === 'leaving' || this.mode === 'idle') return
     if (this.mode === 'loading' || this.mode === 'building') this.completeAll()
     this.updateReturn(performance.now(), true)
+    this.sound.buildEnd(false)
     this.session++
     this.setMode('leaving')
     this.overlay.classList.add('is-leaving')
@@ -715,6 +797,7 @@ export class SwarmEngine {
 
   replay() {
     if (!this.root) return
+    this.clearGate()
     clearTimeout(this.leaveTimer)
     this.session++
     for (const a of this.agents) a.abort()
@@ -737,6 +820,7 @@ export class SwarmEngine {
     for (const a of this.agents) if (a.extra && !a.leaving) this.retire(a)
     this.boost = 1
     this.boostTarget = 1
+    this.sound.buildEnd(true)
     this.setMode('done')
   }
 
@@ -776,6 +860,8 @@ export class SwarmEngine {
     if (now - this.statsAt > 100) {
       this.statsAt = now
       this.emit()
+      const { built, total } = this.snapshot
+      if (this.mode === 'building' && total) this.sound.setProgress(built / total)
     }
   }
 
@@ -904,7 +990,9 @@ export class SwarmEngine {
   }
 
   // Gives idle agents the topmost available step for their role, within half
-  // a screen of the viewport. Extras only take on-screen work.
+  // a screen of the viewport. Extras only take on-screen work. With Tour off
+  // the visitor may stop scrolling, so an agent with nothing nearby takes the
+  // nearest work further away rather than leaving the build unfinished.
   schedule() {
     let idle = 0
     for (const a of this.agents) if (!a.task && !a.leaving) idle++
@@ -913,16 +1001,16 @@ export class SwarmEngine {
     const zoneTop = v.top - v.h * 0.5
     const zoneBottom = v.top + v.h * 1.5
     const cands = { boxer: [], typist: [], pen: [], ruler: [], cloner: [] }
+    const far = this.tour ? null : { boxer: [], typist: [], pen: [], ruler: [], cloner: [] }
     for (const it of this.sorted()) {
       if (it.skipped || it.busy || it.state === 'done' || it.stepIndex >= it.steps.length) continue
       const r = it.rect
-      if (r.y > zoneBottom || r.y + r.h < zoneTop) continue
+      const outside = r.y > zoneBottom || r.y + r.h < zoneTop
+      if (outside && !far) continue
       if (!this.depsDone(it)) continue
-      cands[KIND_ROLE[it.steps[it.stepIndex]]].push(it)
+      ;(outside ? far : cands)[KIND_ROLE[it.steps[it.stepIndex]]].push(it)
     }
-    for (const a of this.agents) {
-      if (a.task || a.leaving) continue
-      const list = cands[a.role]
+    const pick = (a, list) => {
       let best = null
       let bestScore = Infinity
       for (const it of list) {
@@ -934,6 +1022,12 @@ export class SwarmEngine {
           best = it
         }
       }
+      return best
+    }
+    for (const a of this.agents) {
+      if (a.task || a.leaving) continue
+      let best = pick(a, cands[a.role])
+      if (!best && far && !a.extra) best = pick(a, far[a.role])
       if (best) {
         best.busy = true
         a.assign(runStep(this, a, best, best.steps[best.stepIndex]), best)

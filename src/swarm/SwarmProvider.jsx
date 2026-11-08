@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { SwarmContext } from './context.js'
 import { SwarmEngine } from './engine/engine.js'
+import { StartCard } from './StartCard.jsx'
 import { SwarmOverlay } from './SwarmOverlay.jsx'
 import { Toolbar } from './Toolbar.jsx'
 
@@ -13,8 +14,10 @@ export function SwarmProvider({ children }) {
     if (import.meta.env.DEV) window.__swarm = engine
     engine.attach(rootRef.current, overlayRef.current)
     // The inline script in index.html already decided: first visit in this
-    // session and no reduced-motion preference means the intro plays.
-    if (document.documentElement.getAttribute('data-swarm') === 'play') engine.start()
+    // session and no reduced-motion preference means the intro plays. Unless
+    // the visitor muted the sound before, a start card first offers to play
+    // it with sound (browsers only allow sound after a click).
+    if (document.documentElement.getAttribute('data-swarm') === 'play') engine.start({ gate: engine.sound.pref })
     else engine.setMode('live')
     return () => engine.detach()
   }, [engine])
@@ -42,6 +45,7 @@ export function SwarmProvider({ children }) {
         <SwarmOverlay ref={overlayRef} />
       </div>
       <Toolbar />
+      <StartCard />
     </SwarmContext.Provider>
   )
 }
